@@ -1,0 +1,36 @@
+---
+title: "R报告"
+author: "张桥石"
+date: "2017年6月29日"
+output: 
+pdf_document: 
+keep_tex: yes
+latex_engine: xelatex
+toc: yes
+header-includes:
+- \usepackage{xeCJK}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+
+
+```{r echo=FALSE}
+qdata <- read.table("result.txt")
+pdata<-data.frame(qdata$V2,qdata$V1)
+library(DT)
+library(ggplot2)
+##表格
+datatable(pdata)
+##3绘图
+ggplot(qdata)+geom_bar(aes(x=V2,y=V1,fill=factor(V2)),stat= 'identity', position = 'stack')+theme_bw()+labs(title="Quaity result")+theme(axis.text.x = element_text(size = 8,color = "black", face = "bold", vjust = 1, hjust = 1, angle = 90))+geom_text(aes(x =V2,y=V1,label=V1),position=position_dodge(.9))
+
+```
+
+##R报告单结束

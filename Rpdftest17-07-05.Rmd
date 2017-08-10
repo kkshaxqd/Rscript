@@ -1,0 +1,94 @@
+---
+title: "使用Rmarkdown进行自动化质控报告"
+author:
+  - 张桥石
+documentclass: ctexart
+output:
+  rticles::ctex:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+classoption: "hyperref,"
+date: "`r format(Sys.time(), '%Y-%B-%d')`"
+---
+
+
+
+
+##说明
+在该分析流程中，对过滤后的测序数据、比对数据和变异结果做了严格的质控（QC），质控结果展示如下。如果某些质控标准不满足，可能执行重测序或其他有效方式来改善数据质量，保证分析时所使用的为高质量数据。
+
+##数据质控结果1：结果vcf文件中基因功能区分布展示
+###表格1
+```{r echo=FALSE, warning=FALSE }
+options(scipen=200)
+setwd("D:\\myscript\\R脚本库")
+
+library(gridExtra) 
+hdata <- read.table("zhikong03.txt",sep="\t")
+colnames(hdata) <- c("GeneFuction","Number")
+
+grid.table(hdata)
+
+
+
+
+```
+
+
+###绘图1
+```{r echo=FALSE, warning=FALSE, fig.width=9.5, fig.height=7, cache=TRUE }
+options(scipen=200)
+library(ggplot2)
+setwd("D:\\myscript\\R脚本库")
+qdata <- read.table("result.txt")
+pdata<-data.frame(qdata$V2,qdata$V1)
+colnames(pdata) <- c("GeneFuction","Number")
+cat("这是一个标准的展示表","\n")
+knitr::kable(
+  pdata, caption = '质控结果表。'
+)
+cat("这是一个标准的展示图","\n")
+ggplot(pdata)+geom_bar(aes(x=GeneFuction,y=Number,fill=factor(GeneFuction)),stat= 'identity', position = 'stack')+theme_bw()+labs(title="Quaityresult1")+theme(axis.text.x = element_text(size = 10,color = "black", face = "bold", vjust = 1, hjust = 1,angle=90),plot.margin=unit(c(0.2,0.2,0.2,0.2),"inches"))+geom_text(aes(x=GeneFuction,y=Number,label=Number),position=position_dodge(1.2),vjust = 0)
+
+```
+
+
+##数据质控结果2：靶向区域总体覆盖度展示
+```{r echo=FALSE, warning=FALSE , fig.width=9.5, fig.height=5, cache=TRUE}
+library(ggplot2)
+setwd("D:\\myscript\\R脚本库")
+ldata <- read.table("zhikong01.txt",sep="\t")
+colnames(ldata) <- c("DifferentTargetCoverage","Ratio")
+
+knitr::kable(
+  ldata, caption = '质控结果表。'
+)
+
+ggplot(ldata)+geom_bar(aes(x=DifferentTargetCoverage,y=Ratio,fill=factor(DifferentTargetCoverage)),stat= 'identity', position = 'stack')+theme_bw()+labs(title="Quaityresult2")+geom_text(aes(x=DifferentTargetCoverage,y=Ratio,label=Ratio),position=position_dodge(0.8),vjust = 0)+theme(axis.text.x = element_text(size = 10,color = "black", face = "bold", vjust = 1, hjust = 1,angle=90),axis.text.y = element_text(size = 10,color = "black", face = "bold", vjust = 1, hjust = 1),plot.margin=unit(c(0.2,0.2,0.2,0.2),"inches"))+ guides(fill=FALSE)+coord_flip()
+
+```
+
+##数据质控结果3：变异类型统计
+```{r echo=FALSE, warning=FALSE }
+library(ggplot2)
+setwd("D:\\myscript\\R脚本库")
+mdata <- read.table("zhikong02.txt",sep="\t")
+ndata<-data.frame(mdata$V2,mdata$V1)
+colnames(ndata) <- c("ExonicFunction","Number")
+
+knitr::kable(
+  ndata, caption = '质控结果表。'
+)
+
+ggplot(ndata)+geom_bar(aes(x=ExonicFunction,y=Number,fill=factor(ExonicFunction)),stat= 'identity', position = 'stack')+theme_bw()+labs(title="Quaityresult3")+geom_text(aes(x=ExonicFunction,y=Number,label=Number),position=position_dodge(1.2),vjust = 0)+theme(axis.text.x = element_text(size = 8,color = "black", face = "bold", vjust = 1, hjust = 1,angle=90))
+
+```
+
+
+
+
+
+
+##结论
+  数据质量满足质控结果，可以进行下一步分析。

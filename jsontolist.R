@@ -1,0 +1,8 @@
+install.packages("rjson")
+setwd("D:\\data\\16-07")
+library(rjson)
+jsondata<-fromJSON(file="clinical.project-TCGA-LUAD.2016-07-04T05-49-08.389307.json",method = "C",unexpected.escape = "error")
+bbk<-unlist(jsondata,recursive = TRUE, use.names=T)
+write.csv(bbk, file = "foo.csv")
+install.packages("plyr")
+library(plyr)
